@@ -390,18 +390,18 @@
     rightScoreValue.textContent = `${rightScore} / 3`;
   }
 
-  /** Calculate target rotation based on movement direction */
-  function calculateTargetRotation(dx, dy) {
+  /** Calculate target rotation based on movement direction and team */
+  function calculateTargetRotation(dx, dy, playerTeam) {
     if (dx === 0 && dy === 0) return null; // No movement, no rotation change
 
-    // Fix coordinate system mapping for Three.js
-    // In Three.js: X = left/right, Z = forward/back
-    // In our input: dx = left/right (-1 to 1), dy = up/down (-1 to 1, where -1 is up)
-    // We want: left(-1,0) -> face left, right(1,0) -> face right, up(0,-1) -> face forward, down(0,1) -> face back
-
-    // Math.atan2(z, x) gives us the correct rotation around Y-axis
-    // We need to map: dx -> X movement, -dy -> Z movement (negative because -dy is forward)
-    let targetRotation = Math.atan2(-dy, dx);
+    // In Three.js top-view: X = left/right, Z = up/down on screen
+    // dx: -1 = left, 1 = right
+    // dy: -1 = up, 1 = down
+    // Position mapping: mesh.position.set(p.x, 12, p.y) means server y -> Three.js Z
+    
+    // Math.atan2(z, x) gives us the rotation around Y-axis
+    // We simply use dy as Z movement and dx as X movement
+    let targetRotation = Math.atan2(dy, dx);
 
     return targetRotation;
   }
@@ -448,10 +448,10 @@
             }
           });
 
-          // Set bear orientation based on team - left team faces right, right team faces left
-          if (p.team === 'right') {
-            mesh.rotation.y = -Math.PI; // -90 degrees - face left
-          }
+          // Initial rotation will be set by the rotation system
+          // Left team starts facing right (0), right team starts facing left (PI)
+          const initialRotation = p.team === 'left' ? 0 : Math.PI;
+          mesh.rotation.y = initialRotation;
 
           // Set up animation mixer for this player
           if (bearAnimations.length > 0) {
@@ -547,14 +547,14 @@
         if (p.id === playerId) {
           // Current player: prioritize input direction for responsiveness
           if (currentDirection.x !== 0 || currentDirection.y !== 0) {
-            targetRotation = calculateTargetRotation(currentDirection.x, currentDirection.y);
+            targetRotation = calculateTargetRotation(currentDirection.x, currentDirection.y, p.team);
           } else if (isActuallyMoving) {
-            targetRotation = calculateTargetRotation(actualMovementX, actualMovementY);
+            targetRotation = calculateTargetRotation(actualMovementX, actualMovementY, p.team);
           }
         } else {
           // Other players: use actual movement direction
           if (isActuallyMoving) {
-            targetRotation = calculateTargetRotation(actualMovementX, actualMovementY);
+            targetRotation = calculateTargetRotation(actualMovementX, actualMovementY, p.team);
           }
         }
 

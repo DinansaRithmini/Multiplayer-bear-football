@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Goal Ball Arena</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Load three.js from a CDN. If this fails due to network issues, copy a local
+       build of three.min.js into this directory and update the path below. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+  <script src="GLTFLoader.js"></script>
+  <script src="SkeletonUtils.js"></script>
+</head>
+
+<body>
+  <!-- Scoreboard overlay -->
+  <div id="scoreboard" class="scoreboard">
+    <div class="team" id="leftTeam">
+      <div class="label">Left</div>
+      <div class="bar">
+        <div class="fill" style="width:0%;"></div>
+      </div>
+      <div class="scoreValue">0 / 3</div>
+    </div>
+    <div class="team" id="rightTeam">
+      <div class="label">Right</div>
+      <div class="bar">
+        <div class="fill" style="width:0%;"></div>
+      </div>
+      <div class="scoreValue">0 / 3</div>
+    </div>
+  </div>
+
+  <div id="hint" class="hint">Collect at least 3 balls and deliver to your goal to win!</div>
+
+  <!-- Game container for Three.js canvas -->
+  <div id="gameContainer"></div>
+
+  <!-- On‑screen controls for mobile devices -->
+  <div id="controls" class="controls">
+    <button id="upBtn" aria-label="Up" class="control-btn up"></button>
+    <button id="leftBtn" aria-label="Left" class="control-btn left"></button>
+    <button id="rightBtn" aria-label="Right" class="control-btn right"></button>
+    <button id="downBtn" aria-label="Down" class="control-btn down"></button>
+  </div>
+  <script src="client.js"></script>
+</body>
+
+</html>

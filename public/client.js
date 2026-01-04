@@ -400,8 +400,8 @@
     // Position mapping: mesh.position.set(p.x, 12, p.y) means server y -> Three.js Z
     
     // Math.atan2(z, x) gives us the rotation around Y-axis
-    // We simply use dy as Z movement and dx as X movement
-    let targetRotation = Math.atan2(dy, dx);
+    // Negate dy to fix inverted up/down facing direction
+    let targetRotation = Math.atan2(-dy, dx) + Math.PI / 2;
 
     return targetRotation;
   }
@@ -449,8 +449,8 @@
           });
 
           // Initial rotation will be set by the rotation system
-          // Left team starts facing right (0), right team starts facing left (PI)
-          const initialRotation = p.team === 'left' ? 0 : Math.PI;
+          // Left team on left side faces right toward center, right team on right side faces left toward center
+          const initialRotation = p.team === 'left' ? Math.PI / 2 : -Math.PI / 2;
           mesh.rotation.y = initialRotation;
 
           // Set up animation mixer for this player

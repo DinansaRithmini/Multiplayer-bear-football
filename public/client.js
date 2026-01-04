@@ -574,36 +574,20 @@
 
         // Handle animation transitions based on movement
         const animState = playerAnimationStates.get(p.id);
-        if (animState) {
+        if (animState && animState.currentAction) {
           // For current player, use input; for others, use actual movement
           const isMoving = p.id === playerId
             ? (currentDirection.x !== 0 || currentDirection.y !== 0)
             : isActuallyMoving;
 
-          if (isMoving !== animState.isMoving) {
-            animState.isMoving = isMoving;
-
-            // Transition between animations
-            if (isMoving && animState.walkAction) {
-              // Switch to walk animation
-              if (animState.currentAction !== animState.walkAction) {
-                if (animState.currentAction) {
-                  animState.currentAction.fadeOut(0.3);
-                }
-                animState.walkAction.reset();
-                animState.walkAction.fadeIn(0.3);
-                animState.currentAction = animState.walkAction;
-              }
-            } else if (!isMoving && animState.idleAction) {
-              // Switch to idle animation
-              if (animState.currentAction !== animState.idleAction) {
-                if (animState.currentAction) {
-                  animState.currentAction.fadeOut(0.3);
-                }
-                animState.idleAction.reset();
-                animState.idleAction.fadeIn(0.3);
-                animState.currentAction = animState.idleAction;
-              }
+          // Pause animation when not moving, play when moving
+          if (isMoving) {
+            if (animState.currentAction.paused) {
+              animState.currentAction.paused = false;
+            }
+          } else {
+            if (!animState.currentAction.paused) {
+              animState.currentAction.paused = true;
             }
           }
         }
